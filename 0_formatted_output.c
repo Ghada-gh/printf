@@ -59,7 +59,7 @@ int _printf(const char *format, ...)
 	  else if (*format == 'b')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char binary_str[32];
+	      char binary_str[64];
 	      int len = sprintf(binary_str, "%u", num);
 	      write(1, binary_str, len);
 	      count += len;
