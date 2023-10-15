@@ -65,7 +65,46 @@ int _printf(const char *format, ...)
 	      count += len;
             }
 	  /* End of Task 2 */
-	  
+
+	  /* Added section for task 3: handling 'u', 'o', 'x', 'X' specifiers */
+	  /* handling 'u' specifier */
+	  else if (*format == 'u')
+            {
+	      unsigned int num = va_arg(args, unsigned int);
+	      char num_str[20];
+	      int len = sprintf(num_str, "%u", num);
+	      write(1, num_str, len);
+	      count += len;
+            }
+	  /* handling 'o' specifier */
+	  else if (*format == 'o')
+            {
+	      unsigned int num = va_arg(args, unsigned int);
+	      char num_str[20];
+	      int len = sprintf(num_str, "%o", num);
+	      write(1, num_str, len);
+	      count += len;
+            }
+	  /* handling 'x' specifier */
+	  else if (*format == 'x')
+            {
+	      unsigned int num = va_arg(args, unsigned int);
+	      char num_str[20];
+	      int len = sprintf(num_str, "%x", num);
+	      write(1, num_str, len);
+	      count += len;
+            }
+	  /* handling 'X' specifier */
+	  else if (*format == 'X')
+            {
+	      unsigned int num = va_arg(args, unsigned int);
+	      char num_str[20];
+	      int len = sprintf(num_str, "%X", num);
+	      write(1, num_str, len);
+	      count += len;
+            }
+	  /* End of Task 3 */
+
 	  else if (*format == '%')
             {
 	      write(1, "%", 1);
