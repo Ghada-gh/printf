@@ -10,7 +10,7 @@
  * @format: Format string
  * Return: Number of characters printed  
  */
-
+/*
 int _printf(const char *format, ...)
 {
   va_list args;
@@ -48,4 +48,69 @@ int _printf(const char *format, ...)
     }
   va_end(args);
   return (count);
+}
+*/
+
+void write_char(char c)
+{
+  fputc(c, stdout);
+}
+
+void write_string(const char *s)
+{
+  int i;
+  
+  for (i = 0; s[i] != '\0'; i++)
+    {
+      write_char(s[i]);
+    }
+}
+
+int _printf(const char *format, ...)
+{
+  int count = 0;
+  const char *traverse = format;
+
+  while (*traverse != '\0')
+    {
+      if (*traverse == '%')
+	{
+	  traverse++;
+	  switch (*traverse)
+	    {
+	    case 'c':
+	      {
+		char c = *((char *)(traverse - 1) + 1);
+		write_char(c);
+		count++;
+		break;
+	      }
+	    case 's':
+	      {
+		const char *s = *((const char **)(traverse - 1) + 1);
+		write_string(s);
+		count += strlen(s);
+		break;
+	      }
+	    case '%':
+	      {
+		write_char('%');
+		count++;
+		break;
+	      }
+	    default:
+	      {
+		break;
+	      }
+            }
+        }
+      else
+	{
+	  write_char(*traverse);
+	  count++;
+        }
+      traverse++;
+    }
+
+  return count;
 }
