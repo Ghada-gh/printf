@@ -53,7 +53,7 @@ int _printf(const char *format, ...)
   return (count);
 }
 */
- /*
+ 
 void handle_conversion(const char *format, va_list args, char *buffer)
 {
   char *temp = buffer;
@@ -141,9 +141,9 @@ int _printf(const char *format, ...)
   fwrite(buffer, sizeof(char), length, stdout);
   return (length);
 }
- */
 
 
+/*
 int _printf(const char *format, ...)
 {
   int count = 0;
@@ -191,3 +191,4 @@ int _printf(const char *format, ...)
   va_end(args);
   return count;
 }
+*/
