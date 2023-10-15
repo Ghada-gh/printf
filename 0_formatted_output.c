@@ -18,7 +18,8 @@ int _printf(const char *format, ...)
 {
   int count = 0;
   va_list args;
-
+  char buffer[1024]; /*Task 4:Local buffer for output*/
+  
   va_start(args, format);
 
   while (*format)
@@ -29,7 +30,8 @@ int _printf(const char *format, ...)
 	  if (*format == 'c')
             {
 	      char c = va_arg(args, int);
-	      write(1, &c, 1);
+	      /*write(1, &c, 1);*/
+	      buffer[count] = c; /*Task 4*/
 	      count++;
             }
 	  else if (*format == 's')
@@ -39,7 +41,8 @@ int _printf(const char *format, ...)
 		str = "(null)";
 	      while (*str)
                 {
-		  write(1, str, 1);
+		  /*write(1, str, 1);*/
+		  buffer[count] = *str; /*Task 4*/
 		  str++;
 		  count++;
                 }
@@ -48,9 +51,9 @@ int _printf(const char *format, ...)
 	  else if (*format == 'd' || *format == 'i')
             {
 	      int num = va_arg(args, int);
-	      char num_str[20];
-	      int len = sprintf(num_str, "%d", num);
-	      write(1, num_str, len);
+	      /*char num_str[20];*/
+	      int len = sprintf(buffer + count, "%d", num);
+	      /*write(1, num_str, len);*/
 	      count += len;
             }
 	  /* End of task 1 */
@@ -59,9 +62,9 @@ int _printf(const char *format, ...)
 	  else if (*format == 'b')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char binary_str[64];
-	      int len = sprintf(binary_str, "%u", num);
-	      write(1, binary_str, len);
+	      /*char binary_str[64];*/
+	      int len = sprintf(buffer + count, "%u", num);
+	      /*write(1, binary_str, len);*/
 	      count += len;
             }
 	  /* End of Task 2 */
@@ -71,52 +74,65 @@ int _printf(const char *format, ...)
 	  else if (*format == 'u')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char num_str[20];
-	      int len = sprintf(num_str, "%u", num);
-	      write(1, num_str, len);
+	      /*char num_str[20];*/
+	      int len = sprintf(buffer + count, "%u", num);
+	      /*write(1, num_str, len);*/
 	      count += len;
             }
 	  /* handling 'o' specifier */
 	  else if (*format == 'o')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char num_str[20];
-	      int len = sprintf(num_str, "%o", num);
-	      write(1, num_str, len);
+	      /* char num_str[20];*/
+	      int len = sprintf(buffer + count, "%o", num);
+	      /*write(1, num_str, len);*/
 	      count += len;
             }
 	  /* handling 'x' specifier */
 	  else if (*format == 'x')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char num_str[20];
-	      int len = sprintf(num_str, "%x", num);
-	      write(1, num_str, len);
+	      /*char num_str[20];*/
+	      int len = sprintf(buffer + count, "%x", num);
+	      /*write(1, num_str, len);*/
 	      count += len;
             }
 	  /* handling 'X' specifier */
 	  else if (*format == 'X')
             {
 	      unsigned int num = va_arg(args, unsigned int);
-	      char num_str[20];
-	      int len = sprintf(num_str, "%X", num);
-	      write(1, num_str, len);
+	      /*char num_str[20];*/
+	      int len = sprintf(buffer + count, "%X", num);
+	      /* write(1, num_str, len);*/
 	      count += len;
             }
 	  /* End of Task 3 */
 
 	  else if (*format == '%')
             {
-	      write(1, "%", 1);
+	      /*write(1, "%", 1);*/
+	      buffer[count] = '%';
 	      count++;
             }
         }
       else
         {
-	  write(1, format, 1);
+	  /* write(1, format, 1);*/
+	  buffer[count] = *format;
 	  count++;
         }
       format++;
+
+  /* Task 4: Check if the buffer is full, then write its content*/
+      if (count >= 1024)
+	{
+	  write(1, buffer, count);
+	  count = 0;
+	}
+    }
+  if (count > 0)
+    {
+      write(1, buffer, count);
     }
 
   va_end(args);
