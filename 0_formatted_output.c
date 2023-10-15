@@ -133,6 +133,16 @@ int _printf(const char *format, ...)
 		  count++;
                 }
             }
+	  /* Added section for Task 1: handling 'd' and 'i' specifiers */
+	  else if (*format == 'd' || *format == 'i')
+            {
+	      int num = va_arg(args, int);
+	      char num_str[20];
+	      int len = sprintf(num_str, "%d", num);
+	      write(1, num_str, len);
+	      count += len;
+            }
+	  /* End of task 1 */
 	  else if (*format == '%')
             {
 	      write(1, "%", 1);
