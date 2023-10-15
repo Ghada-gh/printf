@@ -108,6 +108,45 @@ int _printf(const char *format, ...)
             }
 	  /* End of Task 3 */
 
+	  /*Added section for Task 5: handling 'S' specifier */
+	  else if (*format == 'S')
+            {
+	      char *str = va_arg(args, char *);
+	      if (str == NULL)
+                {
+		  str = "(null)";
+                }
+	      while (*str)
+                {
+		  if ((*str < 32 && *str > 0) || *str >= 127)
+                    {
+		      buffer[count] = '\\';
+		      count++;
+		      buffer[count] = 'x';
+		      count++;
+		      sprintf(buffer + count, "%02X", *str);
+		      count += 2;
+                    }
+		  else
+                    {
+		      buffer[count] = *str;
+		      count++;
+                    }
+		  str++;
+                }
+            }
+	  /*End of Task 5*/
+
+	  /* Added section for Task 6: handling 'p' specifier */
+	  else if (*format == 'p')
+            {
+	      void *ptr = va_arg(args, void *);
+	      sprintf(buffer + count, "%p", ptr);
+	      count += 10;
+            }
+	  /*End of Task 6*/
+
+	  
 	  else if (*format == '%')
             {
 	      /*write(1, "%", 1);*/
