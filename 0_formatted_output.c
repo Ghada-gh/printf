@@ -7,12 +7,6 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#define BUFFER_SIZE 1024
-
-
-int _printf(const char *format, ...);
-int _puts(char *str);
-int _putchar(char c);
 
 /**
  * _printf - Custom printf function that handles a group of conversion specifiers.
@@ -20,119 +14,166 @@ int _putchar(char c);
  * Return: Number of characters printed (excluding the null byte)
  */
 
-int _putchar(char c)
-{
-  return write(1, &c, 1);
-}
-
-int _puts(char *str)
-{
-  int i;
-
-  for (i = 0; str[i]; i++)
-    {
-      if (_putchar(str[i]) == -1)
-	return -1;
-    }
-  return i;
-}
+#define BUFFER_SIZE 1024
 
 int _printf(const char *format, ...)
 {
-  va_list args;
   int count = 0;
-  char buffer[BUFFER_SIZE];
-  int i = 0;
-  int j ;
+  va_list args;
+  char buffer[1024]; /*Task 4:Local buffer for output*/
 
   va_start(args, format);
 
-  while (format && format[i])
+  while (*format)
     {
-      if (count >= BUFFER_SIZE - 1)
+      if (*format == '%')
         {
-	  buffer[count] = '\0';
-	  _puts(buffer);
-	  count = 0;
-        }
+          format++;
+          if (*format == 'c')
+            {
+              char c = va_arg(args, int);
+              /*write(1, &c, 1);*/
+              buffer[count] = c; /*Task 4*/
+              count++;
+            }
+          else if (*format == 's')
+            {
+              char *str = va_arg(args, char *);
+              if (str == NULL)
+                str = "(null)";
+              while (*str)
+                {
+                  /*write(1, str, 1);*/
+                  buffer[count] = *str; /*Task 4*/
+                  str++;
+                  count++;
+                }
+            }
+          /* Added section for Task 1: handling 'd' and 'i' specifiers */
+          else if (*format == 'd' || *format == 'i')
+            {
+              int num = va_arg(args, int);
+              /*char num_str[20];*/
+              int len = sprintf(buffer + count, "%d", num);
+              /*write(1, num_str, len);*/
+              count += len;
+            }
+          /* End of task 1 */
 
-      if (format[i] != '%')
-        {
-	  buffer[count] = format[i];
-	  count++;
+          /*Added section for task 2: handling 'b' specifier */
+          else if (*format == 'b')
+            {
+              unsigned int num = va_arg(args, unsigned int);
+              /*char binary_str[64];*/
+              int len = sprintf(buffer + count, "%u", num);
+              /*write(1, binary_str, len);*/
+              count += len;
+            }
+          /* End of Task 2 */
+
+          /* Added section for task 3: handling 'u', 'o', 'x', 'X' specifiers */
+          /* handling 'u' specifier */
+          else if (*format == 'u')
+            {
+              unsigned int num = va_arg(args, unsigned int);
+              /*char num_str[20];*/
+              int len = sprintf(buffer + count, "%u", num);
+              /*write(1, num_str, len);*/
+              count += len;
+            }
+          /* handling 'o' specifier */
+          else if (*format == 'o')
+            {
+              unsigned int num = va_arg(args, unsigned int);
+              /* char num_str[20];*/
+              int len = sprintf(buffer + count, "%o", num);
+              /*write(1, num_str, len);*/
+              count += len;
+            }
+          /* handling 'x' specifier */
+          else if (*format == 'x')
+            {
+              unsigned int num = va_arg(args, unsigned int);
+              /*char num_str[20];*/
+              int len = sprintf(buffer + count, "%x", num);
+              /*write(1, num_str, len);*/
+              count += len;
+            }
+          /* handling 'X' specifier */
+          else if (*format == 'X')
+            {
+              unsigned int num = va_arg(args, unsigned int);
+              /*char num_str[20];*/
+              int len = sprintf(buffer + count, "%X", num);
+              /* write(1, num_str, len);*/
+              count += len;
+            }
+          /* End of Task 3 */
+
+          /*Added section for Task 5: handling 'S' specifier */
+          else if (*format == 'S')
+            {
+              char *str = va_arg(args, char *);
+              if (str == NULL)
+                {
+                  str = "(null)";
+                }
+              while (*str)
+                {
+                  if ((*str < 32 && *str > 0) || *str >= 127)
+                    {
+                      buffer[count] = '\\';
+                      count++;
+                      buffer[count] = 'x';
+                      count++;
+                      sprintf(buffer + count, "%02X", *str);
+                      count += 2;
+                    }
+                  else
+                    {
+                      buffer[count] = *str;
+                      count++;
+                    }
+                  str++;
+                }
+            }
+          /*End of Task 5*/
+
+          /* Added section for Task 6: handling 'p' specifier */
+          else if (*format == 'p')
+            {
+              void *ptr = va_arg(args, void *);
+              sprintf(buffer + count, "%p", ptr);
+              count += 10;
+            }
+          /*End of Task 6*/
+              
+          else if (*format == '%')
+            {
+              /*write(1, "%", 1);*/
+              buffer[count] = '%';
+              count++;
+            }
         }
       else
         {
-	  i++;
-	  if (format[i] == '\0')
-	    return -1;
-	  switch (format[i])
-            {
-            case 'c':
-	      buffer[count] = va_arg(args, int);
-	      count++;
-	      break;
-            case 's':
-	      count += _puts(va_arg(args, char *));
-	      break;
-            case '%':
-	      buffer[count] = '%';
-	      count++;
-	      break;
-            case 'd':
-            case 'i':
-	      count += sprintf(buffer + count, "%d", va_arg(args, int));
-	      break;
-            case 'u':
-	      count += sprintf(buffer + count, "%u", va_arg(args, unsigned int));
-	      break;
-            case 'o':
-	      count += sprintf(buffer + count, "%o", va_arg(args, unsigned int));
-	      break;
-            case 'x':
-	      count += sprintf(buffer + count, "%x", va_arg(args, unsigned int));
-	      break;
-            case 'X':
-	      count += sprintf(buffer + count, "%X", va_arg(args, unsigned int));
-	      break;
-            case 'p':
-	      count += sprintf(buffer + count, "%p", va_arg(args, void *));
-	      break;
-            case 'S':
-            {
-	      char *str = va_arg(args, char *);
-	      buffer[count] = 'S';
-	      count++;
-	      buffer[count] = '[';
-	      count++;
-	      
-	      for (j = 0; str[j]; j++)
-                {
-		  if (str[j] < 32 || str[j] >= 127)
-                    {
-		      count += sprintf(buffer + count, "\\x%02X", (unsigned char)str[j]);
-                    }
-		  else
-                    {
-		      buffer[count] = str[j];
-		      count++;
-                    }
-                }
-	      buffer[count] = ']';
-	      count++;
-	      break;
-            }
-            default:
-	      buffer[count] = '%';
-	      count++;
-	      buffer[count] = format[i];
-	      count++;
-            }
+          /* write(1, format, 1);*/
+          buffer[count] = *format;
+          count++;
         }
-      i++;
+      format++;
+
+  /* Task 4: Check if the buffer is full, then write its content*/
+      if (count >= 1024)
+        {
+          write(1, buffer, count);
+          count = 0;
+        }
+    }
+  if (count > 0)
+    {
+      write(1, buffer, count);
     }
   va_end(args);
-  buffer[count] = '\0';
-  _puts(buffer);
   return count;
 }
