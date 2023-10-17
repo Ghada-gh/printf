@@ -56,11 +56,6 @@ int _printf(const char *format, ...)
             }
 	  else if (*format == 'b')
             {
-	      /* unsigned int num = va_arg(args, unsigned int);
-	      char binary_str[32];
-	      int len = sprintf(binary_str, "%u", num);
-	      write(1, binary_str, len);
-	      count += len;*/
 	      unsigned int num = va_arg(args, unsigned int);
 	      if (num == 0)
 		{
