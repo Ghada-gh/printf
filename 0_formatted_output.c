@@ -56,12 +56,37 @@ int _printf(const char *format, ...)
             }
 	  else if (*format == 'b')
             {
-	      unsigned int num = va_arg(args, unsigned int);
+	      /* unsigned int num = va_arg(args, unsigned int);
 	      char binary_str[32];
 	      int len = sprintf(binary_str, "%u", num);
 	      write(1, binary_str, len);
-	      count += len;
+	      count += len;*/
+	      unsigned int num = va_arg(args, unsigned int);
+	      if (num == 0)
+		{
+		  write(1, "0", 1);
+		  count++;
+                }
+	      else
+		{
+		  char binary_str[32];  
+		  int i = 0;
+		  while (num > 0)
+		    {
+		      binary_str[i] = (num % 2) + '0';
+		      num /= 2;
+		      i++;
+		    }
+		  binary_str[i] = '\0';
+		  len = i;
+		  for (i = len - 1; i >= 0; i--)
+		    {
+		      write(1, &binary_str[i], 1);
+		      count++;
+                    }
+                }
             }
+	  /**/
 	  else if (*format == 'u')
             {
 	      unsigned int num = va_arg(args, unsigned int);
